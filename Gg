@@ -1,0 +1,103 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const games = [
+  {
+    name: "Agar.io",
+    url: "https://agar.io",
+  },
+  {
+    name: "Slither.io",
+    url: "https://slither.io",
+  },
+  {
+    name: "Paper.io 2",
+    url: "https://paper-io.com",
+  },
+  {
+    name: "Venge.io",
+    url: "https://venge.io",
+  },
+  {
+    name: "ZombsRoyale.io",
+    url: "https://zombsroyale.io",
+  },
+];
+
+const AdminPanel = ({ onAddGame }) => {
+  const [newGame, setNewGame] = useState({ name: "", url: "" });
+
+  const handleAdd = () => {
+    if (newGame.name && newGame.url) {
+      onAddGame(newGame);
+      setNewGame({ name: "", url: "" });
+    }
+  };
+
+  return (
+    <div className="p-4 border rounded-xl mt-4">
+      <h2 className="text-xl font-bold mb-2">Admin Panel</h2>
+      <Input
+        placeholder="Oyun Adı"
+        value={newGame.name}
+        onChange={(e) => setNewGame({ ...newGame, name: e.target.value })}
+        className="mb-2"
+      />
+      <Input
+        placeholder="Oyun URL"
+        value={newGame.url}
+        onChange={(e) => setNewGame({ ...newGame, url: e.target.value })}
+        className="mb-2"
+      />
+      <Button onClick={handleAdd}>Oyunu Ekle</Button>
+    </div>
+  );
+};
+
+export default function Oyunlar1() {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [password, setPassword] = useState("");
+  const [gameList, setGameList] = useState(games);
+
+  const handleLogin = () => {
+    if (password === "admin123") setIsAdmin(true);
+  };
+
+  const addGame = (game) => {
+    setGameList((prev) => [...prev, game]);
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-4">oyunlar1 - Tüm .io ve Mobil Oyunlar</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {gameList.map((game, index) => (
+          <Card key={index}>
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-lg mb-2">{game.name}</h3>
+              <Button onClick={() => window.open(game.url, "_blank")}>Oyna</Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {!isAdmin && (
+        <div className="mt-6">
+          <h2 className="text-xl font-bold mb-2">Admin Girişi</h2>
+          <Input
+            type="password"
+            placeholder="Şifre"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mb-2"
+          />
+          <Button onClick={handleLogin}>Giriş Yap</Button>
+        </div>
+      )}
+
+      {isAdmin && <AdminPanel onAddGame={addGame} />}
+    </div>
+  );
+}
